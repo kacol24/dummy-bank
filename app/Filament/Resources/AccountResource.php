@@ -67,7 +67,8 @@ class AccountResource extends Resource
     {
         return $infolist
             ->schema([
-                TextEntry::make('account_number'),
+                TextEntry::make('account_number')
+                         ->copyable(),
                 TextEntry::make('created_at')
                          ->sinceTooltip(),
                 TextEntry::make('name'),
@@ -80,7 +81,7 @@ class AccountResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\TransactionsRelationManager::class,
         ];
     }
 
