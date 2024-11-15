@@ -7,7 +7,6 @@ use App\Models\Account;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
-use function Psy\debug;
 
 class InterestDisbursement implements ShouldQueue
 {
