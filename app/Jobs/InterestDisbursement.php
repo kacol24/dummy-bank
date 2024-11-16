@@ -37,8 +37,9 @@ class InterestDisbursement implements ShouldQueue
         $balance = $account->balance;
         $interestRate = 10 / 100;
         $daysInPeriod = 1;
+        $daysInYear = Carbon::now()->daysInYear();
         // 3,50 % (Bunga Tabungan per tahun) x 1 / 365 (periode harian) x Rp100.000.000
-        $amount = floor($interestRate * $daysInPeriod / Carbon::$daysInYear * $balance);
+        $amount = floor($interestRate * $daysInPeriod / $daysInYear * $balance);
 
         try {
             (new MakeDeposit())->handle($account, $amount, 'Savings interest');
