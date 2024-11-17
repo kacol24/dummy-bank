@@ -15,14 +15,34 @@ class Account extends Model implements Wallet
 
     protected $fillable = [
         'user_id',
+        'account_type_id',
+        'is_primary',
         'account_number',
         'name',
+    ];
+
+    protected $with = [
+        'wallet',
     ];
 
     protected static function booted()
     {
         static::creating(function ($model) {
-            $model->user_id = auth()->id();
+            if (! $model->user_id) {
+                $model->user_id = auth()->id();
+            }
+            if (! $model->account_number) {
+                $accountNumber = null;
+                while (is_null($accountNumber)) {
+                    $branchCode = '863';
+                    $random = mt_rand(1000000, 9999999);
+                    $candidate = $branchCode.$random;
+                    if (Account::where('account_number', $candidate)->doesntExist()) {
+                        $accountNumber = $candidate;
+                    }
+                }
+                $model->account_number = $accountNumber;
+            }
         });
     }
 
@@ -36,5 +56,10 @@ class Account extends Model implements Wallet
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function accountType()
+    {
+        return $this->belongsTo(AccountType::class);
     }
 }

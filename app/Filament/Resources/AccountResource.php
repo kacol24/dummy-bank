@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AccountResource\Pages;
 use App\Filament\Resources\AccountResource\RelationManagers;
 use App\Models\Account;
+use App\Models\AccountType;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
@@ -27,11 +29,20 @@ class AccountResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('account_number')
-                         ->required()
-                         ->maxLength(10),
+                Select::make('account_type_id')
+                      ->label('Account type')
+                      ->required()
+                      ->options(function () {
+                          return AccountType::query()
+                                            ->when(auth()->user()->accounts->count() == 0, function ($query) {
+                                                return $query->where('is_default', true);
+                                            })
+                                            ->pluck('name', 'id');
+                      }),
                 TextInput::make('name')
                          ->required(),
+                TextInput::make('account_number')
+                         ->maxLength(10),
             ]);
     }
 

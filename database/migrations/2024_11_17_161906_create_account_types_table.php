@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('account_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('account_type_id');
+            $table->boolean('is_default')->default(false);
 
-            $table->boolean('is_primary')->default(false);
-            $table->string('account_number')->index();
             $table->string('name');
+            $table->string('interest_rate');
+            $table->unsignedTinyInteger('period')->nullable();
+            $table->string('period_unit')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('account_types');
     }
 };
