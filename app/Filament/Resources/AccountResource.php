@@ -9,6 +9,8 @@ use App\Models\AccountType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -78,15 +80,34 @@ class AccountResource extends Resource
     {
         return $infolist
             ->schema([
-                TextEntry::make('account_number')
-                         ->copyable(),
-                TextEntry::make('created_at')
-                         ->sinceTooltip(),
-                TextEntry::make('name'),
-                TextEntry::make('balance')
-                         ->prefix('Rp')
-                         ->numeric(decimalPlaces: 2),
-            ]);
+                Group::make()
+                     ->schema([
+                         TextEntry::make('name'),
+                         TextEntry::make('created_at')
+                                  ->sinceTooltip(),
+                         TextEntry::make('account_number')
+                                  ->copyable(),
+                         TextEntry::make('user.name')
+                                  ->label('Account holder'),
+                     ])
+                     ->columns(2)
+                     ->columnSpan(4),
+                Section::make()
+                       ->schema([
+                           TextEntry::make('balance')
+                                    ->prefix('Rp')
+                                    ->numeric(decimalPlaces: 2),
+                           TextEntry::make('deposits.interest_rate')
+                                    ->label('Interest rate')
+                                    ->suffix('% p.a'),
+                           TextEntry::make('deposits.friendlyPeriod')
+                                    ->label('Disbursement')
+                                    ->prefix('Every '),
+                       ])
+                       ->columns(1)
+                       ->columnSpan(1),
+            ])
+            ->columns(5);
     }
 
     public static function getRelations(): array

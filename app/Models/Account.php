@@ -37,11 +37,21 @@ class Account extends Model implements Wallet
                     $branchCode = '863';
                     $random = mt_rand(1000000, 9999999);
                     $candidate = $branchCode.$random;
-                    if (Account::where('account_number', $candidate)->doesntExist()) {
+                    if (Account::withTrashed()->where('account_number', $candidate)->doesntExist()) {
                         $accountNumber = $candidate;
                     }
                 }
                 $model->account_number = $accountNumber;
+            }
+        });
+
+        static::created(function (Account $account) {
+            if ($account->accountType->is_default) {
+                $account->deposits()->create([
+                    'interest_rate' => $account->accountType->interest_rate,
+                    'period'        => $account->accountType->period,
+                    'period_unit'   => $account->accountType->period_unit,
+                ]);
             }
         });
     }
@@ -61,5 +71,10 @@ class Account extends Model implements Wallet
     public function accountType()
     {
         return $this->belongsTo(AccountType::class);
+    }
+
+    public function deposits()
+    {
+        return $this->hasOne(Deposit::class);
     }
 }
