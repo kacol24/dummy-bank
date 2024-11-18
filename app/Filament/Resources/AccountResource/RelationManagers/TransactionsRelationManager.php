@@ -5,6 +5,7 @@ namespace App\Filament\Resources\AccountResource\RelationManagers;
 use Bavix\Wallet\Models\Transaction;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -32,15 +33,17 @@ class TransactionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('amount')
             ->columns([
-                TextColumn::make('uuid')
+                TextColumn::make('created_at')
+                          ->dateTime()
                           ->label('Transaction ID')
                           ->grow(false)
-                          ->description(fn(Transaction $record): string => $record->created_at),
+                          ->description(fn(Transaction $record): string => $record->uuid),
                 TextColumn::make('meta.message')
                           ->label('Description')
                           ->limit()
                           ->grow(),
                 TextColumn::make('amount')
+                          ->alignment(Alignment::End)
                           ->prefix(function (Transaction $record) {
                               $prefix = '+';
                               if ($record->type == Transaction::TYPE_WITHDRAW) {
