@@ -10,7 +10,7 @@ return new class extends Migration{
      */
     public function up(): void
     {
-        Schema::create('deposits', function (Blueprint $table) {
+        Schema::create('time_deposits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('account_id');
 
@@ -31,6 +31,6 @@ return new class extends Migration{
      */
     public function down(): void
     {
-        Schema::dropIfExists('deposits');
+        Schema::dropIfExists('time_deposits');
     }
 };

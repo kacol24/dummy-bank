@@ -47,7 +47,7 @@ class Account extends Model implements Wallet
 
         static::created(function (Account $account) {
             if ($account->accountType->is_default) {
-                $account->deposits()->create([
+                $account->timeDeposit()->create([
                     'interest_rate' => $account->accountType->interest_rate,
                     'period'        => $account->accountType->period,
                     'period_unit'   => $account->accountType->period_unit,
@@ -73,8 +73,8 @@ class Account extends Model implements Wallet
         return $this->belongsTo(AccountType::class);
     }
 
-    public function deposits()
+    public function timeDeposit()
     {
-        return $this->hasOne(Deposit::class);
+        return $this->hasOne(TimeDeposit::class);
     }
 }

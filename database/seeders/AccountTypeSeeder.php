@@ -16,11 +16,15 @@ class AccountTypeSeeder extends Seeder
             'is_default'    => true,
             'name'          => 'Regular',
             'interest_rate' => 2,
+            'period'        => 1,
+            'period_unit'   => 'days',
         ]);
 
         AccountType::create([
-            'name'          => 'Savings',
+            'name'          => 'Mini Saver',
             'interest_rate' => 4,
+            'period'        => 7,
+            'period_unit'   => 'days',
         ]);
     }
 }

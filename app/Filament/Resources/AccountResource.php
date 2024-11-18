@@ -43,8 +43,8 @@ class AccountResource extends Resource
                       }),
                 TextInput::make('name')
                          ->required(),
-                TextInput::make('account_number')
-                         ->maxLength(10),
+                //TextInput::make('account_number')
+                //         ->maxLength(10),
             ]);
     }
 
@@ -97,10 +97,10 @@ class AccountResource extends Resource
                            TextEntry::make('balance')
                                     ->prefix('Rp')
                                     ->numeric(decimalPlaces: 2),
-                           TextEntry::make('deposits.interest_rate')
+                           TextEntry::make('timeDeposit.interest_rate')
                                     ->label('Interest rate')
                                     ->suffix('% p.a'),
-                           TextEntry::make('deposits.friendlyPeriod')
+                           TextEntry::make('timeDeposit.friendlyPeriod')
                                     ->label('Disbursement')
                                     ->prefix('Every '),
                        ])
