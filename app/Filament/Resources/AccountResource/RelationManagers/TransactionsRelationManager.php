@@ -4,6 +4,7 @@ namespace App\Filament\Resources\AccountResource\RelationManagers;
 
 use App\Actions\Account\MakeDeposit;
 use App\Filament\Resources\AccountResource\Pages\ViewAccount;
+use App\Models\TimeDeposit;
 use Bavix\Wallet\Models\Transaction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -79,12 +80,13 @@ class TransactionsRelationManager extends RelationManager
                                    ->prefix('Rp'),
                       ])
                       ->action(function (array $data): void {
-                          (new MakeDeposit())->handle($this->getOwnerRecord(), $data['amount'], 'Client deposit');
+                          $account = $this->getOwnerRecord();
+                          (new MakeDeposit())->handle($account, $data['amount'], 'Client deposit');
                           Notification::make()
                                       ->title('Deposit successfully')
                                       ->success()
                                       ->send();
-                          $this->redirect(route(ViewAccount::getRouteName(), $this->getOwnerRecord()->id));
+                          $this->redirect(route(ViewAccount::getRouteName(), $account->id));
                       }),
             ])
             ->defaultSort('created_at', 'desc');

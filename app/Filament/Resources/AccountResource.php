@@ -38,7 +38,8 @@ class AccountResource extends Resource
                                             ->when(auth()->user()->accounts->count() == 0, function ($query) {
                                                 return $query->where('is_default', true);
                                             })
-                                            ->pluck('name', 'id');
+                                            ->get()
+                                            ->pluck('dropdownDisplay', 'id');
                       }),
                 TextInput::make('name')
                          ->required(),

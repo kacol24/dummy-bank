@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('account_types', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_default')->default(false);
+            $table->boolean('is_locked')->default(false);
 
             $table->string('name');
             $table->string('interest_rate');
