@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AccountResource\Pages;
-use App\Filament\Resources\AccountResource\RelationManagers;
 use App\Models\Account;
 use App\Models\AccountType;
 use Filament\Forms\Components\Select;
@@ -89,6 +88,8 @@ class AccountResource extends Resource
                                   ->copyable(),
                          TextEntry::make('user.name')
                                   ->label('Account holder'),
+                         TextEntry::make('accountType.name')
+                                  ->label('Account type'),
                      ])
                      ->columns(2)
                      ->columnSpan(4),
@@ -113,7 +114,7 @@ class AccountResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\TransactionsRelationManager::class,
+
         ];
     }
 
