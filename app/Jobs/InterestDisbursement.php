@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Actions\Account\MakeDeposit;
 use App\Models\Account;
+use Carbon\CarbonInterval;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
@@ -35,8 +36,14 @@ class InterestDisbursement implements ShouldQueue
     protected function disburse($account)
     {
         $balance = $account->balance;
-        $interestRate = 10 / 100;
-        $daysInPeriod = 1;
+        $timeDeposit = $account->timeDeposit;
+        $interestRate = $timeDeposit->interest_rate / 100;
+        $period = $timeDeposit->period;
+        $periodUnit = $timeDeposit->period_unit;
+        $daysInPeriod = CarbonInterval::fromString("$period $periodUnit")->days;
+        if (! is_null($timeDeposit->ends_at)) {
+            $daysInPeriod = $timeDeposit->created_at->diffInDays($timeDeposit->ends_at);
+        }
         $daysInYear = Carbon::now()->daysInYear();
         // 3,50 % (Bunga Tabungan per tahun) x 1 / 365 (periode harian) x Rp100.000.000
         $amount = floor($interestRate * $daysInPeriod / $daysInYear * $balance);
