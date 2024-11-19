@@ -11,12 +11,13 @@ final class MakeDeposit
 {
     /**
      * @param  \App\Models\Account  $account
-     * @param $amount
-     * @param $message
+     * @param  int  $amount
+     * @param  string|null  $message
+     * @param  array  $additionalMeta
      * @return void
      * @throws \Bavix\Wallet\Internal\Exceptions\ExceptionInterface
      */
-    public function handle(Account $account, $amount, $message = null)
+    public function handle(Account $account, int $amount, string $message = null, array $additionalMeta = [])
     {
         $meta = [
             'from' => $account->balanceInt,
@@ -25,6 +26,6 @@ final class MakeDeposit
         if (! is_null($message)) {
             $meta['message'] = $message;
         }
-        $account->deposit($amount, $meta);
+        $account->deposit($amount, array_merge($additionalMeta, $meta));
     }
 }
