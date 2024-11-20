@@ -2,6 +2,8 @@
 
 use App\Console\Commands\AccountDeposit;
 use App\Jobs\InterestDisbursement;
+use App\Jobs\SimulateExpense;
+use App\Jobs\SimulateIncome;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,6 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
                   ->withSchedule(function (Schedule $schedule) {
                       $schedule->job(new InterestDisbursement())
                                ->dailyAt('05:00');
+                      $schedule->job(new SimulateIncome())
+                               ->dailyAt('10:00');
+                      $schedule->job(new SimulateExpense())
+                               ->hourly()
+                               ->between('08:00', '22:00');
                   })
                   ->withCommands([
                       AccountDeposit::class,
