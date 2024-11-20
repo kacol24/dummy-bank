@@ -3,10 +3,15 @@
 namespace App\Filament\Resources\AccountResource\RelationManagers;
 
 use App\Actions\Account\MakeDeposit;
+use App\Actions\Account\MakeTransfer;
 use App\Filament\Resources\AccountResource\Pages\ViewAccount;
+use App\Models\Account;
 use Bavix\Wallet\Models\Transaction;
+use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\Alignment;
@@ -58,14 +63,67 @@ class TransactionsRelationManager extends RelationManager
 
                               return $prefix.'Rp';
                           })
-                          ->numeric(decimalPlaces: 2)
                           ->color(function (Transaction $record) {
                               if ($record->type == Transaction::TYPE_DEPOSIT) {
                                   return 'success';
                               }
+                          })
+                          ->formatStateUsing(function ($state) {
+                              return number_format(abs($state), 2);
                           }),
             ])
             ->headerActions([
+                Action::make('create_transfer')
+                      ->color('gray')
+                      ->requiresConfirmation()
+                      ->form([
+                          Select::make('destination_account_id')
+                                ->label('Destination')
+                                ->native(false)
+                                ->searchable()
+                                ->required()
+                                ->options(
+                                    function () {
+                                        $accounts = Account::where('user_id', 1)
+                                                           ->whereNot('id', $this->getOwnerRecord()->id)
+                                                           ->get();
+                                        $options = [];
+                                        foreach ($accounts as $account) {
+                                            $options[$account->accountType->name][$account->id] = $account->name;
+                                        }
+
+                                        return $options;
+                                    }
+                                ),
+                          TextInput::make('amount')
+                                   ->numeric()
+                                   ->mask(RawJs::make('$money($input)'))
+                                   ->stripCharacters(',')
+                                   ->required()
+                                   ->prefix('Rp')
+                                   ->hintAction(
+                                       FormAction::make('all_amount')
+                                                 ->label(function () {
+                                                     return number_format($this->getOwnerRecord()->balance);
+                                                 })
+                                                 ->action(function (Set $set, $state) {
+                                                     $set(
+                                                         'amount',
+                                                         number_format($this->getOwnerRecord()->balance)
+                                                     );
+                                                 })
+                                   ),
+                      ])
+                      ->action(function (array $data): void {
+                          $account = $this->getOwnerRecord();
+                          $destination = Account::find($data['destination_account_id']);
+                          (new MakeTransfer($account, $destination))->handle($data['amount'], 'Transfer funds');
+                          Notification::make()
+                                      ->title('Transfer successfully')
+                                      ->success()
+                                      ->send();
+                          $this->redirect(route(ViewAccount::getRouteName(), $account->id));
+                      }),
                 Action::make('make_deposit')
                       ->requiresConfirmation()
                       ->color('gray')
