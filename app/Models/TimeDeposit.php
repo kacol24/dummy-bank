@@ -38,6 +38,11 @@ class TimeDeposit extends Model
         );
     }
 
+    public function isMonthly()
+    {
+        return is_null($this->ends_at) && $this->period == 1 && $this->period_unit == 'months';
+    }
+
     public function isLocked()
     {
         return ! is_null($this->ends_at);
