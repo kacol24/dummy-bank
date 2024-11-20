@@ -52,8 +52,10 @@ class AccountResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('account_number'),
+                TextColumn::make('account_number')
+                          ->copyable(),
                 TextColumn::make('name'),
+                TextColumn::make('accountType.dropdownDisplay'),
                 TextColumn::make('balance')
                           ->prefix('Rp')
                           ->numeric(decimalPlaces: 2)

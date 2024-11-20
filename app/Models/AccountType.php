@@ -28,7 +28,7 @@ class AccountType extends Model
                 $interestRate = $attributes['interest_rate'];
                 $period = $attributes['period'];
                 $periodUnit = $attributes['period_unit'];
-                $locked = $attributes['is_locked'] ? 'Locked: ' : '';
+                $locked = $attributes['is_locked'] ? 'Locked:' : '';
 
                 $string = "[$name] $interestRate% p.a";
                 if ($attributes['is_locked']) {

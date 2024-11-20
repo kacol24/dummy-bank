@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\AccountDeposit;
+use App\Console\Commands\UpdateInterestRate;
 use App\Jobs\InterestDisbursement;
 use App\Jobs\SimulateExpense;
 use App\Jobs\SimulateIncome;
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
                   })
                   ->withCommands([
                       AccountDeposit::class,
+                      UpdateInterestRate::class,
                   ])
                   ->withExceptions(function (Exceptions $exceptions) {
                       //
