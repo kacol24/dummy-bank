@@ -27,7 +27,12 @@ class InterestDisbursement implements ShouldQueue
      */
     public function handle(): void
     {
-        $accounts = Account::get();
+        $accounts = Account::query()
+                           ->whereHas('timeDeposit', function ($query) {
+                               return $query->whereNull('ends_at')
+                                            ->orWhere('ends_at', today());
+                           })
+                           ->get();
 
         foreach ($accounts as $account) {
             $this->disburse($account);

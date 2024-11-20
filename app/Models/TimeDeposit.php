@@ -22,7 +22,7 @@ class TimeDeposit extends Model
     ];
 
     protected $casts = [
-        'ends_at' => 'datetime',
+        'ends_at' => 'date',
     ];
 
     public function friendlyPeriod(): Attribute

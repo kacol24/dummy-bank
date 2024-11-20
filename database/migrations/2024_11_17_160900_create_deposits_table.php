@@ -17,7 +17,7 @@ return new class extends Migration{
             $table->unsignedTinyInteger('interest_rate');
             $table->unsignedTinyInteger('period')->nullable();
             $table->string('period_unit')->nullable();
-            $table->dateTime('ends_at')->nullable();
+            $table->date('ends_at')->nullable();
             $table->string('rollover_instruction')->nullable();
             $table->unsignedTinyInteger('rollover_counter')->default(0);
 
