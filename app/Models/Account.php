@@ -43,6 +43,9 @@ class Account extends Model implements Wallet
                 }
                 $model->account_number = $accountNumber;
             }
+            if (auth()->user()->accounts->count() == 0) {
+                $model->is_primary = true;
+            }
         });
 
         static::created(function (Account $account) {
