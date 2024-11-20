@@ -49,13 +49,13 @@ class Account extends Model implements Wallet
         });
 
         static::created(function (Account $account) {
-            if ($account->accountType->is_default) {
-                $account->timeDeposit()->create([
-                    'interest_rate' => $account->accountType->interest_rate,
-                    'period'        => $account->accountType->period,
-                    'period_unit'   => $account->accountType->period_unit,
-                ]);
-            }
+            $accountType = $account->accountType;
+            $account->timeDeposit()->create([
+                'interest_rate' => $accountType->interest_rate,
+                'period'        => $accountType->period,
+                'period_unit'   => $accountType->period_unit,
+                'ends_at'       => $accountType->is_locked ? today()->add("$accountType->period $accountType->period_unit") : null,
+            ]);
         });
     }
 
