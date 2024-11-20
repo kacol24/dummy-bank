@@ -47,6 +47,10 @@ class InterestDisbursement implements ShouldQueue
             return;
         }
 
+        if (! is_null($timeDeposit->ends_at) && ! $timeDeposit->ends_at->isToday()) {
+            return;
+        }
+
         if ($timeDeposit->isMonthly() && today()->get(Unit::Day) != 28) {
             return;
         }
