@@ -39,7 +39,7 @@ class AccountDeposit extends Command implements PromptsForMissingInput
         $message = $this->ask('Include custom message?', 'Deposit from teller');
 
         $account = Account::findOrFail($accountId);
-        (new MakeDeposit())->handle($account, $amount, $message);
+        (new MakeDeposit($account))->handle($amount, $message);
 
         $this->info('The command was successful!');
     }

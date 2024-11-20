@@ -58,8 +58,7 @@ class InterestDisbursement implements ShouldQueue
         $amount = floor($interestRate * $daysInPeriod / $daysInYear * $balance);
 
         try {
-            (new MakeDeposit())->handle(
-                $account,
+            (new MakeDeposit($account))->handle(
                 $amount,
                 'Savings interest',
                 array_merge(
