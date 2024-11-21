@@ -27,10 +27,10 @@ class SimulateIncome implements ShouldQueue
     {
         $accounts = Account::where('is_primary', true)->get();
         foreach ($accounts as $account) {
-            Lottery::odds(1, 3)
+            Lottery::odds(1, 2)
                    ->winner(function () use ($account) {
                        // deposit
-                       $amount = mt_rand(1, 10) * 50000;
+                       $amount = mt_rand(10, 20) * 50000;
                        (new MakeDeposit($account))->handle($amount, 'Received funds');
                    })
                    ->choose();
