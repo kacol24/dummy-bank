@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\AccountResource\RelationManagers;
 
-use App\Actions\Account\MakeDeposit;
 use App\Actions\Account\MakeTransfer;
+use App\Events\ClientMakeDeposit;
 use App\Filament\Resources\AccountResource\Pages\ViewAccount;
 use App\Models\Account;
 use Bavix\Wallet\Models\Transaction;
@@ -19,6 +19,7 @@ use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Thunk\Verbs\Exceptions\EventNotValid;
 
 class TransactionsRelationManager extends RelationManager
 {
@@ -138,7 +139,20 @@ class TransactionsRelationManager extends RelationManager
                       ])
                       ->action(function (array $data): void {
                           $account = $this->getOwnerRecord();
-                          (new MakeDeposit($account))->handle($data['amount'], 'Client deposit');
+                          //(new MakeDeposit($account))->handle($data['amount'], 'Client deposit');
+                          try {
+                              ClientMakeDeposit::fire(
+                                  account_id: $account->id,
+                                  amount: (int) $data['amount']
+                              );
+                          } catch (EventNotValid $e) {
+                              Notification::make()
+                                          ->title($e->getMessage())
+                                          ->danger()
+                                          ->send();
+
+                              return;
+                          }
                           Notification::make()
                                       ->title('Deposit successfully')
                                       ->success()
