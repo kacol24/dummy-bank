@@ -18,6 +18,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Thunk\Verbs\Exceptions\EventNotValid;
 
@@ -160,6 +161,18 @@ class TransactionsRelationManager extends RelationManager
                           $this->redirect(route(ViewAccount::getRouteName(), $account->id));
                       }),
             ])
+            ->groups([
+                Group::make('created_at')
+                     ->label('Date')
+                     ->collapsible()
+                     ->date()
+                     ->orderQueryUsing(function ($query) {
+                         return $query->latest();
+                     }),
+            ])
+            ->defaultGroup('created_at')
+            ->groupingDirectionSettingHidden()
+            ->groupingSettingsHidden()
             ->defaultSort('created_at', 'desc');
     }
 }

@@ -23,9 +23,9 @@ use Filament\Tables\Table;
 class AccountResource extends Resource
 {
     protected static ?string $model = Account::class;
-    
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -47,7 +47,7 @@ class AccountResource extends Resource
                 //         ->maxLength(10),
             ]);
     }
-    
+
     public static function table(Table $table): Table
     {
         return $table
@@ -77,7 +77,7 @@ class AccountResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -117,14 +117,14 @@ class AccountResource extends Resource
                      ]),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
-        
+
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
