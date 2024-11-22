@@ -94,7 +94,7 @@ class AccountResource extends Resource
                          TextEntry::make('accountType.name')
                                   ->label('Account type'),
                      ])
-                     ->columns(2)
+                     ->columns(['default' => 2])
                      ->columnSpan(4),
                 Section::make()
                        ->schema([
@@ -108,10 +108,10 @@ class AccountResource extends Resource
                                     ->label('Disbursement')
                                     ->prefix('Every '),
                        ])
-                       ->columns(1)
-                       ->columnSpan(1),
+                       ->columns(['default' => 1])
+                       ->columnSpan(2),
             ])
-            ->columns(5);
+            ->columns(6);
     }
 
     public static function getRelations(): array
