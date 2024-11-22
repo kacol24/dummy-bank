@@ -18,6 +18,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Layout\Grid;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -107,7 +108,25 @@ class TransactionsRelationManager extends RelationManager
                                   ->formatStateUsing(function ($state) {
                                       return number_format(abs($state), 2);
                                   })
-                                  ->visibleFrom('md'),
+                                  ->visibleFrom('md')
+                                  ->summarize([
+                                      Summarizer::make()
+                                                ->label('Deposit')
+                                                ->prefix('Rp')
+                                                ->numeric(2)
+                                                ->using(function ($query) {
+                                                    return $query->where('type', Transaction::TYPE_DEPOSIT)
+                                                                 ->sum('amount');
+                                                }),
+                                      Summarizer::make()
+                                                ->label('Withdraw')
+                                                ->prefix('Rp')
+                                                ->numeric(2)
+                                                ->using(function ($query) {
+                                                    return $query->where('type', Transaction::TYPE_WITHDRAW)
+                                                                 ->sum('amount');
+                                                }),
+                                  ]),
                     ]),
             ])
             ->headerActions([
@@ -207,6 +226,7 @@ class TransactionsRelationManager extends RelationManager
                      }),
             ])
             ->defaultGroup('created_at')
+            ->groupsOnly()
             ->groupingDirectionSettingHidden()
             ->groupingSettingsHidden()
             ->defaultSort('created_at', 'desc');
