@@ -23,9 +23,9 @@ use Filament\Tables\Table;
 class AccountResource extends Resource
 {
     protected static ?string $model = Account::class;
-
+    
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -47,7 +47,7 @@ class AccountResource extends Resource
                 //         ->maxLength(10),
             ]);
     }
-
+    
     public static function table(Table $table): Table
     {
         return $table
@@ -77,50 +77,54 @@ class AccountResource extends Resource
                 ]),
             ]);
     }
-
+    
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
             ->schema([
                 Group::make()
+                     ->columns(3)
+                     ->columnSpan('full')
                      ->schema([
-                         TextEntry::make('name'),
-                         TextEntry::make('created_at')
-                                  ->sinceTooltip(),
-                         TextEntry::make('account_number')
-                                  ->copyable(),
-                         TextEntry::make('user.name')
-                                  ->label('Account holder'),
-                         TextEntry::make('accountType.name')
-                                  ->label('Account type'),
-                     ])
-                     ->columns(['default' => 2])
-                     ->columnSpan(4),
-                Section::make()
-                       ->schema([
-                           TextEntry::make('balance')
-                                    ->prefix('Rp')
-                                    ->numeric(decimalPlaces: 2),
-                           TextEntry::make('timeDeposit.interest_rate')
-                                    ->label('Interest rate')
-                                    ->suffix('% p.a'),
-                           TextEntry::make('timeDeposit.friendlyPeriod')
-                                    ->label('Disbursement')
-                                    ->prefix('Every '),
-                       ])
-                       ->columns(['default' => 1])
-                       ->columnSpan(2),
-            ])
-            ->columns(6);
+                         Group::make()
+                              ->columns(['default' => 2])
+                              ->columnSpan(['md' => 2])
+                              ->schema([
+                                  TextEntry::make('name'),
+                                  TextEntry::make('created_at')
+                                           ->sinceTooltip(),
+                                  TextEntry::make('account_number')
+                                           ->copyable(),
+                                  TextEntry::make('user.name')
+                                           ->label('Account holder'),
+                                  TextEntry::make('accountType.name')
+                                           ->label('Account type'),
+                              ]),
+                         Section::make()
+                                ->columns(['default' => 2, 'md' => 1])
+                                ->columnSpan(['md' => 1])
+                                ->schema([
+                                    TextEntry::make('balance')
+                                             ->prefix('Rp')
+                                             ->numeric(decimalPlaces: 2),
+                                    TextEntry::make('timeDeposit.interest_rate')
+                                             ->label('Interest rate')
+                                             ->suffix('% p.a'),
+                                    TextEntry::make('timeDeposit.friendlyPeriod')
+                                             ->label('Disbursement')
+                                             ->prefix('Every '),
+                                ]),
+                     ]),
+            ]);
     }
-
+    
     public static function getRelations(): array
     {
         return [
-
+        
         ];
     }
-
+    
     public static function getPages(): array
     {
         return [
