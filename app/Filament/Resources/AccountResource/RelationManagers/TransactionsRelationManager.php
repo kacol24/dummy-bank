@@ -17,6 +17,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -46,33 +47,68 @@ class TransactionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('amount')
             ->columns([
-                TextColumn::make('created_at')
-                          ->dateTime()
-                          ->label('Transaction ID')
-                          ->grow(false)
-                          ->description(fn(Transaction $record): string => $record->uuid),
-                TextColumn::make('meta.message')
-                          ->label('Description')
-                          ->limit()
-                          ->grow(),
-                TextColumn::make('amount')
-                          ->alignment(Alignment::End)
-                          ->prefix(function (Transaction $record) {
-                              $prefix = '+';
-                              if ($record->type == Transaction::TYPE_WITHDRAW) {
-                                  $prefix = '-';
-                              }
+                Grid::make([
+                    'default' => 2,
+                    'md'      => 3,
+                ])
+                    ->schema([
+                        TextColumn::make('uuid')
+                                  ->label('Transaction ID')
+                                  ->copyable()
+                                  ->lineClamp(1)
+                                  ->tooltip(function (TextColumn $column): ?string {
+                                      return $column->getState();
+                                  })
+                                  ->grow(false)
+                                  ->description(fn(Transaction $record
+                                  ): string => $record->created_at->format('M j, Y H:i:s')),
+                        TextColumn::make('amount')
+                                  ->alignment(Alignment::End)
+                                  ->prefix(function (Transaction $record) {
+                                      $prefix = '+';
+                                      if ($record->type == Transaction::TYPE_WITHDRAW) {
+                                          $prefix = '-';
+                                      }
 
-                              return $prefix.'Rp';
-                          })
-                          ->color(function (Transaction $record) {
-                              if ($record->type == Transaction::TYPE_DEPOSIT) {
-                                  return 'success';
-                              }
-                          })
-                          ->formatStateUsing(function ($state) {
-                              return number_format(abs($state), 2);
-                          }),
+                                      return $prefix.'Rp';
+                                  })
+                                  ->color(function (Transaction $record) {
+                                      if ($record->type == Transaction::TYPE_DEPOSIT) {
+                                          return 'success';
+                                      }
+                                  })
+                                  ->formatStateUsing(function ($state) {
+                                      return number_format(abs($state), 2);
+                                  })
+                                  ->hiddenFrom('md'),
+                        TextColumn::make('meta.message')
+                                  ->label('Description')
+                                  ->limit()
+                                  ->grow()
+                                  ->columnSpan([
+                                      'default' => 2,
+                                      'md'      => 1,
+                                  ]),
+                        TextColumn::make('amount')
+                                  ->alignment(Alignment::End)
+                                  ->prefix(function (Transaction $record) {
+                                      $prefix = '+';
+                                      if ($record->type == Transaction::TYPE_WITHDRAW) {
+                                          $prefix = '-';
+                                      }
+
+                                      return $prefix.'Rp';
+                                  })
+                                  ->color(function (Transaction $record) {
+                                      if ($record->type == Transaction::TYPE_DEPOSIT) {
+                                          return 'success';
+                                      }
+                                  })
+                                  ->formatStateUsing(function ($state) {
+                                      return number_format(abs($state), 2);
+                                  })
+                                  ->visibleFrom('md'),
+                    ]),
             ])
             ->headerActions([
                 Action::make('create_transfer')
