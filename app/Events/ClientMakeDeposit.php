@@ -26,9 +26,23 @@ class ClientMakeDeposit extends Event
     public function validate(ClientState $state)
     {
         $this->assert(
-            assertion: $this->amount + $state->deposit_amount <= 1000000 && today()->toDateString() == $state->last_deposit_at->toDateString(),
+            assertion:  $this->checkAvailableAmount($state) && $this->checkLastDepositDate($state),
             message: "Max 1,000,000/day. Remaining today ".number_format(abs($state->deposit_amount - 1000000))
         );
+    }
+
+    protected function checkAvailableAmount(ClientState $state)
+    {
+        return $this->amount + $state->deposit_amount <= 1000000;
+    }
+
+    protected function checkLastDepositDate(ClientState $state)
+    {
+        if (is_null($state->last_deposit_at)) {
+            return true;
+        }
+        
+        return today()->toDateString() == $state->last_deposit_at->toDateString();
     }
 
     public function apply(ClientState $state)
