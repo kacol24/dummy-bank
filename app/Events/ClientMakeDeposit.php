@@ -5,6 +5,7 @@ namespace App\Events;
 use App\Actions\Account\MakeDeposit;
 use App\Models\Account;
 use App\States\ClientState;
+use Illuminate\Support\Carbon;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
@@ -25,20 +26,21 @@ class ClientMakeDeposit extends Event
 
     public function validate(ClientState $state)
     {
+        // first deposit, ever
         if (is_null($state->last_deposit_at)) {
             return true;
         }
 
-        if ($state->last_deposit_at->lt(today())) {
+        // first deposit of the day
+        if (! $state->last_deposit_at->isToday()) {
             return true;
         }
 
-        if ($state->last_deposit_at->isToday()) {
-            $this->assert(
-                assertion: $this->checkAvailableAmount($state),
-                message: 'Max 1,000,000/day. Remaining today '.number_format(abs($state->deposit_amount - 1000000))
-            );
-        }
+        // should check for amount
+        $this->assert(
+            assertion: $this->checkAvailableAmount($state),
+            message: 'Max 1,000,000/day. Remaining today '.number_format(abs($state->deposit_amount - 1000000))
+        );
     }
 
     protected function checkAvailableAmount(ClientState $state)
@@ -57,8 +59,12 @@ class ClientMakeDeposit extends Event
 
     public function apply(ClientState $state)
     {
-        $state->last_deposit_at = now();
         $state->deposit_amount += $this->amount;
+        if (is_null($state->last_deposit_at) || ! $state->last_deposit_at->isToday()) {
+            $state->deposit_amount = $this->amount;
+        }
+
+        $state->last_deposit_at = now();
     }
 
     public function handle()
