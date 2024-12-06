@@ -139,6 +139,7 @@ class TransactionsRelationManager extends RelationManager
                                 ->native(false)
                                 ->searchable()
                                 ->required()
+                                ->preload()
                                 ->options(
                                     function () {
                                         $accounts = Account::where('user_id', 1)
@@ -146,7 +147,8 @@ class TransactionsRelationManager extends RelationManager
                                                            ->get();
                                         $options = [];
                                         foreach ($accounts as $account) {
-                                            $options[$account->accountType->name][$account->id] = $account->name;
+                                            $groupName = $account->accountType->dropdownDisplay;
+                                            $options[$groupName][$account->id] = $account->name;
                                         }
 
                                         return $options;
