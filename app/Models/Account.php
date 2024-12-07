@@ -25,6 +25,10 @@ class Account extends Model implements Wallet
         'wallet',
     ];
 
+    protected $appends = [
+        'last_transaction',
+    ];
+
     protected static function booted()
     {
         static::creating(function ($model) {
@@ -57,6 +61,11 @@ class Account extends Model implements Wallet
                 'ends_at'       => $accountType->is_locked ? today()->add("$accountType->period $accountType->period_unit") : null,
             ]);
         });
+    }
+
+    public function getLastTransactionAttribute()
+    {
+        return $this->transactions()->latest()->first();
     }
 
     public function dropdownDisplay(): Attribute

@@ -60,7 +60,7 @@ class AccountResource extends Resource
                           ->prefix('Rp')
                           ->numeric(decimalPlaces: 2)
                           ->sortable(),
-                TextColumn::make('created_at')
+                TextColumn::make('last_transaction.created_at')
                           ->since()
                           ->dateTimeTooltip(),
             ])
