@@ -228,7 +228,6 @@ class TransactionsRelationManager extends RelationManager
                      }),
             ])
             ->defaultGroup('created_at')
-            ->groupsOnly()
             ->groupingDirectionSettingHidden()
             ->groupingSettingsHidden()
             ->defaultSort('created_at', 'desc');
