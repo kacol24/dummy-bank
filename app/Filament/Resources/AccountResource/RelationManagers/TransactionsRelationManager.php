@@ -19,6 +19,8 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -133,7 +135,6 @@ class TransactionsRelationManager extends RelationManager
                                 'm-1' => 'Last month',
                                 'ytd' => 'This year',
                                 'y-1' => 'Last year',
-                                'all' => 'All',
                             ])
                             ->query(function (Builder $query, $data) {
                                 $filter = $data['value'];
@@ -171,6 +172,10 @@ class TransactionsRelationManager extends RelationManager
                                 };
                             })
                             ->default('mtd'),
+                QueryBuilder::make()
+                            ->constraints([
+                                DateConstraint::make('created_at'),
+                            ]),
             ])
             ->groups([
                 Group::make('created_at')
