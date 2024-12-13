@@ -12,7 +12,7 @@ return new class extends Migration{
     {
         Schema::create('time_deposits', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('account_id');
+            $table->snowflake('account_id')->index();
 
             $table->unsignedTinyInteger('interest_rate');
             $table->unsignedTinyInteger('period')->nullable();

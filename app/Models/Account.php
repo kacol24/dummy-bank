@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWallet;
+use Glhd\Bits\Database\HasSnowflakes;
+use Glhd\Bits\Snowflake;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +15,7 @@ class Account extends Model implements Wallet
 {
     use SoftDeletes;
     use HasWallet;
+    use HasSnowflakes;
 
     protected $fillable = [
         'user_id',
@@ -29,6 +32,11 @@ class Account extends Model implements Wallet
     protected $appends = [
         'last_transaction',
     ];
+
+    // conflict with wallet package
+    //protected $casts = [
+    //    'id' => Snowflake::class,
+    //];
 
     protected static function booted()
     {

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->id();
+            $table->snowflakeId();
             $table->foreignId('user_id');
             $table->foreignId('account_type_id');
 
