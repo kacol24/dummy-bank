@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Actions\Account\MakeDeposit;
+use App\Events\FundsDeposited;
 use App\Models\Account;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
@@ -22,7 +23,7 @@ class AccountDeposit extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Make deposit to account';
 
     /**
      * Execute the console command.
@@ -38,8 +39,11 @@ class AccountDeposit extends Command implements PromptsForMissingInput
 
         $message = $this->ask('Include custom message?', 'Deposit from teller');
 
-        $account = Account::findOrFail($accountId);
-        (new MakeDeposit($account))->handle($amount, $message);
+        FundsDeposited::fire(
+            accountId: $accountId,
+            amount: (int) $amount,
+            message: $message
+        );
 
         $this->info('The command was successful!');
     }

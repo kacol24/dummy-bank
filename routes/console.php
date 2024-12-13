@@ -1,13 +1,13 @@
 <?php
 
 use App\Jobs\InterestDisbursement;
-use Illuminate\Foundation\Inspiring;
+use App\Jobs\SimulateIncome;
 use Illuminate\Support\Facades\Artisan;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
-
-Artisan::command('bank:interest-disburse', function (){
+Artisan::command('bank:interest-disburse', function () {
     dispatch(new InterestDisbursement());
-});
+})->describe('Disburse interest');
+
+Artisan::command('bank:simulate-income', function () {
+    dispatch(new SimulateIncome());
+})->describe('Trigger income simulation');

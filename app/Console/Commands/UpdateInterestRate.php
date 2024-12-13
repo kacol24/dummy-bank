@@ -21,7 +21,7 @@ class UpdateInterestRate extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Update interest rate of specific account type';
 
     /**
      * Execute the console command.

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Actions\Account\MakeDeposit;
+use App\Events\FundsDeposited;
 use App\Models\Account;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -31,7 +31,11 @@ class SimulateIncome implements ShouldQueue
                    ->winner(function () use ($account) {
                        // deposit
                        $amount = mt_rand(10, 20) * 50000;
-                       (new MakeDeposit($account))->handle($amount, 'Received funds');
+                       FundsDeposited::fire(
+                           accountId: $account->id,
+                           amount: (int) $amount,
+                           message: 'Received funds'
+                       );
                    })
                    ->choose();
         }
