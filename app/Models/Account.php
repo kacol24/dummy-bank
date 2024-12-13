@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWallet;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -61,6 +62,15 @@ class Account extends Model implements Wallet
                 'ends_at'       => $accountType->is_locked ? today()->add("$accountType->period $accountType->period_unit") : null,
             ]);
         });
+    }
+
+    public function scopeOwner(Builder $query, $userId = null)
+    {
+        if (! $userId) {
+            $userId = auth()->id();
+        }
+
+        return $query->where('user_id', $userId);
     }
 
     public function getLastTransactionAttribute()

@@ -200,12 +200,11 @@ class TransactionsRelationManager extends RelationManager
                       Select::make('destination_account_id')
                             ->label('Destination')
                             ->native(false)
-                            ->searchable()
                             ->required()
                             ->preload()
                             ->options(
                                 function () {
-                                    $accounts = Account::where('user_id', 1)
+                                    $accounts = Account::owner()
                                                        ->whereNot('id', $this->getOwnerRecord()->id)
                                                        ->get();
                                     $options = [];
