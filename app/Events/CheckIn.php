@@ -33,7 +33,7 @@ class CheckIn extends Event
             $state->checkin_count = 0;
         }
 
-        if ($state->last_checkin_at->isYesterday()) {
+        if (! is_null($state->last_checkin_at) && $state->last_checkin_at->isYesterday()) {
             $state->checkin_count++;
         } else {
             $state->checkin_count = 1;
