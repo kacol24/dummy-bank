@@ -25,13 +25,22 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
 
     protected static string $view = 'filament.widgets.daily-check-in';
 
+    protected $checkInState;
+
+    public $nextCheckIn = null;
+
+    public function __construct()
+    {
+        $this->checkInState = DailyCheckInState::load(Filament::auth()->id());
+        $this->nextCheckIn = 0;
+        if (! is_null($this->checkInState->last_checkin_at) && ($this->checkInState->last_checkin_at->isYesterday() || $this->checkInState->last_checkin_at->isToday())) {
+            $this->nextCheckIn = $this->checkInState->checkin_count;
+        }
+    }
+
     public function checkInAction(): Action
     {
-        $checkinState = DailyCheckInState::load(Filament::auth()->id());
-        $step = 0;
-        if (! is_null($checkinState->last_checkin_at) && ($checkinState->last_checkin_at->isYesterday() || $checkinState->last_checkin_at->isToday())) {
-            $step = $checkinState->checkin_count;
-        }
+        $this->checkInState = DailyCheckInState::load(Filament::auth()->id());
 
         return Action::make('checkIn')
                      ->disabledForm()
@@ -43,7 +52,7 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
                          CheckboxList::make('check_in')
                                      ->label(false)
                                      ->columns(7)
-                                     ->default(range(0, $step))
+                                     ->default(range(0, $this->nextCheckIn))
                                      ->options([
                                          1 => 'Day 1',
                                          2 => 'Day 2',
@@ -62,11 +71,11 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
                                          6 => 'Rp1,300,000',
                                          7 => 'Rp2,100,000',
                                      ])
-                                     ->disableOptionWhen(fn(string $value): bool => $value <= $step),
+                                     ->disableOptionWhen(fn(string $value): bool => $value <= $this->nextCheckIn),
                      ])
                      ->action(function () {
                          try {
-                             CheckIn::fire(user_id: Filament::auth()->id());
+                             CheckIn::fire(user_id: filament()->auth()->id());
                          } catch (EventNotValid $e) {
                              Notification::make()
                                          ->title($e->getMessage())
