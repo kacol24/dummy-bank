@@ -83,7 +83,7 @@ class Account extends Model implements Wallet
 
     public function getLastTransactionAttribute()
     {
-        return $this->transactions()->latest()->first();
+        return $this->transactions->last();
     }
 
     public function dropdownDisplay(): Attribute

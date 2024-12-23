@@ -75,7 +75,10 @@ class AccountResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(function ($query){
+                return $query->with('transactions');
+            });
     }
 
     public static function infolist(Infolist $infolist): Infolist
