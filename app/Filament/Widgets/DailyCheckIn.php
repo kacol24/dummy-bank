@@ -44,7 +44,7 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
                          CheckboxList::make('check_in')
                                      ->label(false)
                                      ->columns(7)
-                                     ->default(range(1, $step))
+                                     ->default(range(0, $step))
                                      ->options([
                                          1 => 'Day 1',
                                          2 => 'Day 2',
