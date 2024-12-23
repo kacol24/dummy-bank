@@ -246,40 +246,40 @@ class TransactionsRelationManager extends RelationManager
                                   ->send();
                       $this->redirect(route(ViewAccount::getRouteName(), $account->id));
                   }),
-            Action::make('make_deposit')
-                  ->requiresConfirmation()
-                  ->color('gray')
-                  ->form([
-                      TextInput::make('amount')
-                               ->numeric()
-                               ->maxValue(1000000)
-                               ->mask(RawJs::make('$money($input)'))
-                               ->stripCharacters(',')
-                               ->required()
-                               ->prefix('Rp'),
-                  ])
-                  ->action(function (array $data): void {
-                      $account = $this->getOwnerRecord();
-                      //(new MakeDeposit($account))->handle($data['amount'], 'Client deposit');
-                      try {
-                          ClientMakeDeposit::fire(
-                              account_id: $account->id,
-                              amount: (int) $data['amount']
-                          );
-                      } catch (EventNotValid $e) {
-                          Notification::make()
-                                      ->title($e->getMessage())
-                                      ->danger()
-                                      ->send();
-
-                          return;
-                      }
-                      Notification::make()
-                                  ->title('Deposit successfully')
-                                  ->success()
-                                  ->send();
-                      $this->redirect(route(ViewAccount::getRouteName(), $account->id));
-                  }),
+            //Action::make('make_deposit')
+            //      ->requiresConfirmation()
+            //      ->color('gray')
+            //      ->form([
+            //          TextInput::make('amount')
+            //                   ->numeric()
+            //                   ->maxValue(1000000)
+            //                   ->mask(RawJs::make('$money($input)'))
+            //                   ->stripCharacters(',')
+            //                   ->required()
+            //                   ->prefix('Rp'),
+            //      ])
+            //      ->action(function (array $data): void {
+            //          $account = $this->getOwnerRecord();
+            //          //(new MakeDeposit($account))->handle($data['amount'], 'Client deposit');
+            //          try {
+            //              ClientMakeDeposit::fire(
+            //                  account_id: $account->id,
+            //                  amount: (int) $data['amount']
+            //              );
+            //          } catch (EventNotValid $e) {
+            //              Notification::make()
+            //                          ->title($e->getMessage())
+            //                          ->danger()
+            //                          ->send();
+            //
+            //              return;
+            //          }
+            //          Notification::make()
+            //                      ->title('Deposit successfully')
+            //                      ->success()
+            //                      ->send();
+            //          $this->redirect(route(ViewAccount::getRouteName(), $account->id));
+            //      }),
         ];
     }
 }
