@@ -50,6 +50,7 @@ class TransactionsRelationManager extends RelationManager
                     TextColumn::make('uuid')
                               ->label('Transaction ID')
                               ->copyable()
+                              ->searchable()
                               ->lineClamp(1)
                               ->tooltip(function (TextColumn $column): ?string {
                                   return $column->getState();
