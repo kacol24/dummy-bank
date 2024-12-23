@@ -7,11 +7,13 @@ use App\States\DailyCheckInState;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\StaticAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Filament\Pages\Dashboard;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets\Widget;
 use Thunk\Verbs\Exceptions\EventNotValid;
@@ -41,13 +43,29 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
     public function checkInAction(): Action
     {
         $this->checkInState = DailyCheckInState::load(Filament::auth()->id());
+        $iconColor = 'warning';
+        $description = 'Are you sure you would like to do this?';
+        $title = 'Daily Check-in';
+        if (! is_null($this->checkInState->last_checkin_at) && $this->checkInState->last_checkin_at->isToday()) {
+            $iconColor = 'success';
+            $description = 'Come back tomorrow';
+            $title = 'Completed!';
+        }
 
         return Action::make('checkIn')
                      ->disabledForm()
                      ->requiresConfirmation()
                      ->modalWidth(MaxWidth::FourExtraLarge)
-                     ->modalHeading('Daily Check-in')
+                     ->modalHeading($title)
                      ->modalSubmitActionLabel('Check in')
+                     ->modalSubmitAction(function (StaticAction $action) use ($iconColor) {
+                         if ($iconColor == 'success') {
+                             $action->hidden();
+                         }
+                     })
+                     ->modalIcon('heroicon-o-check')
+                     ->modalIconColor($iconColor)
+                     ->modalDescription($description)
                      ->form([
                          CheckboxList::make('check_in')
                                      ->label(false)
@@ -88,6 +106,8 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
                                      ->title('Check-in successfully!')
                                      ->success()
                                      ->send();
+
+                         $this->redirect(route(Dashboard::getRouteName()));
                      });
     }
 }
