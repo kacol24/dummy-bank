@@ -5,7 +5,6 @@ namespace App\Models;
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWallet;
 use Glhd\Bits\Database\HasSnowflakes;
-use Glhd\Bits\Snowflake;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +26,7 @@ class Account extends Model implements Wallet
 
     protected $with = [
         'wallet',
+        'transactions',
     ];
 
     protected $appends = [
