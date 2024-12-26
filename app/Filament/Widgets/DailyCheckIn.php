@@ -34,15 +34,14 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
     public function __construct()
     {
         $this->checkInState = DailyCheckInState::load(Filament::auth()->id());
-        $this->nextCheckIn = 0;
-        if (! is_null($this->checkInState->last_checkin_at) && ($this->checkInState->last_checkin_at->isYesterday() || $this->checkInState->last_checkin_at->isToday())) {
+        $this->nextCheckIn = 1;
+        if (! is_null($this->checkInState->last_checkin_at) && $this->checkInState->last_checkin_at->isYesterday()) {
             $this->nextCheckIn = $this->checkInState->checkin_count + 1;
         }
     }
 
     public function checkInAction(): Action
     {
-        $this->checkInState = DailyCheckInState::load(Filament::auth()->id());
         $iconColor = 'warning';
         $description = 'Are you sure you would like to do this?';
         $title = 'Daily Check-in';
@@ -50,6 +49,14 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
             $iconColor = 'success';
             $description = 'Come back tomorrow';
             $title = 'Completed!';
+        }
+
+        $checkedInCount = $this->checkInState->checkin_count;
+        if (is_null($this->checkInState->last_checkin_at)) {
+            $checkedInCount = 0;
+        }
+        if ($this->checkInState->last_checkin_at->diffInDays(today()) > 1) {
+            $checkedInCount = 0;
         }
 
         return Action::make('checkIn')
@@ -70,7 +77,7 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
                          CheckboxList::make('check_in')
                                      ->label(false)
                                      ->columns(7)
-                                     ->default(range(0, $this->nextCheckIn))
+                                     ->default(range(0, $checkedInCount))
                                      ->options([
                                          1 => 'Day 1',
                                          2 => 'Day 2',
@@ -89,7 +96,7 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
                                          6 => 'Rp1,300,000',
                                          7 => 'Rp2,100,000',
                                      ])
-                                     ->disableOptionWhen(fn(string $value): bool => $value <= $this->nextCheckIn),
+                                     ->disableOptionWhen(fn(string $value): bool => $value <= $checkedInCount),
                      ])
                      ->action(function () {
                          try {
