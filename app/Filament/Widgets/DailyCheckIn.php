@@ -34,8 +34,13 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
     public function __construct()
     {
         $this->checkInState = DailyCheckInState::load(Filament::auth()->id());
-        $this->nextCheckIn = 1;
-        if (! is_null($this->checkInState->last_checkin_at) && $this->checkInState->last_checkin_at->isYesterday()) {
+        if (is_null($this->checkInState->last_checkin_at)) {
+            $this->nextCheckIn = 1;
+        }
+        if ($this->checkInState->last_checkin_at->isToday()) {
+            $this->nextCheckIn = $this->checkInState->checkin_count;
+        }
+        if ($this->checkInState->last_checkin_at->isYesterday()) {
             $this->nextCheckIn = $this->checkInState->checkin_count + 1;
         }
     }
