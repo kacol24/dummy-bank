@@ -39,7 +39,7 @@ class CheckIn extends Event
             $state->checkin_count = 1;
         }
 
-        $state->last_checkin_at = now();
+        $state->last_checkin_at = now()->timezone('Asia/Jakarta');
     }
 
     /**
