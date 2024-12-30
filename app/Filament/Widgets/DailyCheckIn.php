@@ -67,6 +67,7 @@ class DailyCheckIn extends Widget implements HasActions, HasForms
         }
 
         return Action::make('checkIn')
+                     ->color($iconColor)
                      ->disabledForm()
                      ->requiresConfirmation()
                      ->modalWidth(MaxWidth::FourExtraLarge)
