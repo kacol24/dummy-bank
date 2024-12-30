@@ -21,9 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
                   })
                   ->withSchedule(function (Schedule $schedule) {
                       $schedule->job(new InterestDisbursement())
-                               ->dailyAt('05:00');
+                               ->dailyAt('00:00');
                       $schedule->job(new SimulateIncome())
-                               ->dailyAt('20:00');
+                               ->dailyAt('06:00');
                       $schedule->job(new SimulateExpense())
                                ->hourly()
                                ->between('08:00', '22:00');
